@@ -1,0 +1,39 @@
+{
+  "name": "titere",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/menduz/titere.git"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "printWidth": 120
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/menduz/titere/issues"
+  },
+  "homepage": "https://github.com/menduz/titere#readme",
+  "devDependencies": {
+    "@types/mocha": "^5.0.0",
+    "@types/progress": "^2.0.1",
+    "@types/puppeteer": "^1.2.0",
+    "dcl-tslint-config-standard": "^1.0.1",
+    "mocha": "^5.0.5",
+    "tslint": "^5.9.1",
+    "tslint-language-service": "^0.9.9",
+    "typescript": "^2.8.1"
+  },
+  "dependencies": {
+    "express": "^4.16.3",
+    "puppeteer": "^1.2.0"
+  }
+}
