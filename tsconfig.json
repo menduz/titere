@@ -17,7 +17,6 @@
     "newLine": "LF",
     "stripInternal": true,
     "strict": true,
-    "removeComments": true,
     "pretty": true,
     "outDir": "dist",
     "plugins": [
