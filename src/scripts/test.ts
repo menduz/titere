@@ -32,7 +32,8 @@ async function doTest() {
   console.log('Testing passing fixture')
 
   const passingResult = await run({
-    file: 'http://localhost:7667'
+    file: 'http://localhost:7667',
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
   })
 
   console.dir(passingResult)
@@ -40,7 +41,8 @@ async function doTest() {
   console.assert(passingResult.result.passed, 'It should pass')
 
   const failingResult = await run({
-    file: 'http://localhost:7666'
+    file: 'http://localhost:7666',
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
   })
 
   console.assert(!failingResult.result.passed, 'It should fail')
