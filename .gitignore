@@ -48,8 +48,6 @@ test/**/*.js
 
 test/out
 
-bin/**/*.js
-bin/**/*.map
-bin/**/*.d.ts
+dist
 
 TODO.yml

@@ -3,6 +3,7 @@ import util = require('util')
 import puppeteer = require('puppeteer')
 import { getLocalPath } from './downloadChromium'
 import { initMocha } from './mochaBrowserShim'
+import { readFileSync } from 'fs'
 
 declare var window: any
 
@@ -264,6 +265,14 @@ export async function run({
 }
 
 export function serveIndex(compiledTestsLocation: string) {
+  return serveRaw(`<script src="${compiledTestsLocation}"></script>`)
+}
+
+function sourceUrl(file: string) {
+  return JSON.stringify(readFileSync(file) + '\n//# sourceURL=file')
+}
+
+export function serveRaw(html: string) {
   return function(req: any, res: any) {
     res.writeHead(200, 'OK', {
       'Content-Type': 'text/html'
@@ -275,14 +284,18 @@ export function serveIndex(compiledTestsLocation: string) {
       <head>
         <title>Mocha Tests</title>
         <meta charset="utf-8">
-        <link rel="stylesheet" href="node_modules/mocha/mocha.css">
+        <style>
+          ${readFileSync(require.resolve('mocha/mocha.css')).toJSON()}
+        </style>
       </head>
 
       <body>
         <div id="mocha"></div>
-        <script src="node_modules/mocha/mocha.js"></script>
+        <script>
+          eval(${sourceUrl(require.resolve('mocha/mocha.js'))})
+        </script>
         <script>mocha.setup('bdd');</script>
-        <script src="${compiledTestsLocation}"></script>
+        ${html}
       </body>
 
       </html>

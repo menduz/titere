@@ -53,7 +53,8 @@ export function initMocha(reporter: keyof typeof Mocha.reporters) {
             tests: all.map(clean),
             pending: pending.map(clean),
             failures: failures.map(clean),
-            passes: passes.map(clean)
+            passes: passes.map(clean),
+            passed: failures.length === 0
           },
           coverage: window['__coverage__']
         }

@@ -1,10 +1,10 @@
 import puppeteer = require('puppeteer')
-import ProgressBar = require('progress')
+const ProgressBar = require('progress')
 
 const revision = require('puppeteer/package.json').puppeteer.chromium_revision
 const browserFetcher = (puppeteer as any)['createBrowserFetcher']()
 
-let progressBar: ProgressBar | null = null
+let progressBar: any | null = null
 let lastDownloadedBytes = 0
 
 function onProgress(downloadedBytes: number, totalBytes: number) {
