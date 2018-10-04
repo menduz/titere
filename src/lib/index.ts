@@ -177,27 +177,22 @@ async function configureViewport(width: number, height: number, page: puppeteer.
 }
 
 function handleConsole(msg: puppeteer.ConsoleMessage) {
-  new Promise(async (resolve, reject) => {
-    try {
-      let args = await Promise.all(msg.args().map($ => $.jsonValue()))
-      // process stdout stub
-      let isStdout = args[0] === 'stdout:'
+  // tslint:disable-next-line:semicolon
+  ;(async () => {
+    let args = await Promise.all(msg.args().map($ => $.jsonValue()))
+    // process stdout stub
+    let isStdout = args[0] === 'stdout:'
 
-      if (isStdout) {
-        // tslint:disable-next-line
-        args = args.slice(1)
-      }
-
+    if (isStdout) {
       // tslint:disable-next-line
-      let text = (util.format as any)(...args)
-      !isStdout && (text += '\n')
-      process.stdout.write(text)
-    } catch (e) {
-      console.error(e)
-      reject(e)
+      args = args.slice(1)
     }
-    resolve(1)
-  }).catch(_ => process.stdout.write('Error printing error: ' + msg.text()))
+
+    // tslint:disable-next-line
+    let text = (util.format as any)(...args)
+    !isStdout && (text += '\n')
+    process.stdout.write(text)
+  })().catch(err => process.stdout.write('Error printing error: ' + msg.text() + '\n' + err))
 }
 
 function prepareUrl(filePath: string) {
