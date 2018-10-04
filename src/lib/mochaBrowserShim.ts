@@ -11,6 +11,8 @@ export function initMocha(reporter: keyof typeof Mocha.reporters) {
   })(console)
 
   function shimMochaInstance(m: Mocha) {
+    m.reporter(reporter || 'spec')
+
     const run = m.run.bind(m)
 
     m.run = () => {
