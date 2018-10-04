@@ -176,24 +176,28 @@ async function configureViewport(width: number, height: number, page: puppeteer.
   return page
 }
 
-function handleConsole(msg: any) {
-  const args = msg._args
+function handleConsole(msg: puppeteer.ConsoleMessage) {
+  new Promise(async (resolve, reject) => {
+    try {
+      let args = await Promise.all(msg.args().map($ => $.jsonValue()))
+      // process stdout stub
+      let isStdout = args[0] === 'stdout:'
 
-  // tslint:disable-next-line
-  Promise.all(args.map((arg: any) => arg.jsonValue())).then((args: any[]) => {
-    // process stdout stub
-    let isStdout = args[0] === 'stdout:'
+      if (isStdout) {
+        // tslint:disable-next-line
+        args = args.slice(1)
+      }
 
-    if (isStdout) {
       // tslint:disable-next-line
-      args = args.slice(1)
+      let text = (util.format as any)(...args)
+      !isStdout && (text += '\n')
+      process.stdout.write(text)
+    } catch (e) {
+      console.error(e)
+      reject(e)
     }
-
-    // tslint:disable-next-line
-    let msg = (util.format as any)(...args)
-    !isStdout && (msg += '\n')
-    process.stdout.write(msg)
-  })
+    resolve(1)
+  }).catch(_ => process.stdout.write('Error printing error: ' + msg.text()))
 }
 
 function prepareUrl(filePath: string) {
@@ -231,7 +235,7 @@ export async function run({
 
   const url = prepareUrl(file)
 
-  const options = {
+  const options: puppeteer.LaunchOptions = {
     ignoreHTTPSErrors: true,
     headless: false,
     args,
