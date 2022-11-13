@@ -1,7 +1,7 @@
 import path = require('path')
 import util = require('util')
 import puppeteer = require('puppeteer')
-import { getLocalPath } from './downloadChromium'
+const { downloadBrowser } = require('puppeteer/internal/node/install.js')
 import { initMocha } from './mochaBrowserShim'
 import { readFileSync } from 'fs'
 
@@ -167,7 +167,7 @@ export interface ResultStats {
 async function configureViewport(width: number, height: number, page: puppeteer.Page) {
   if (!width && !height) return page
 
-  let viewport = page.viewport()
+  let viewport = page.viewport()!
   width && (viewport.width = width)
   height && (viewport.height = height)
 
@@ -179,7 +179,7 @@ async function configureViewport(width: number, height: number, page: puppeteer.
 function handleConsole(msg: puppeteer.ConsoleMessage) {
   // tslint:disable-next-line:semicolon
   ;(async () => {
-    let args = await Promise.all(msg.args().map($ => $.jsonValue()))
+    let args = await Promise.all(msg.args().map(($) => $.jsonValue()))
     // process stdout stub
     let isStdout = args[0] === 'stdout:'
 
@@ -192,7 +192,7 @@ function handleConsole(msg: puppeteer.ConsoleMessage) {
     let text = (util.format as any)(...args)
     !isStdout && (text += '\n')
     process.stdout.write(text)
-  })().catch(err => process.stdout.write('Error printing error: ' + msg.text() + '\n' + err))
+  })().catch((err) => process.stdout.write('Error printing error: ' + msg.text() + '\n' + err))
 }
 
 function prepareUrl(filePath: string) {
@@ -219,27 +219,24 @@ export async function run({
   height,
   args,
   executablePath,
-  visible
+  visible,
 }: Options): Promise<Run> {
   // validate options
   if (!file) {
     throw new Error('Test page path is required.')
   }
 
+  await downloadBrowser()
+
   let theTimeout = timeout || 60000
 
   const url = prepareUrl(file)
 
-  const options: puppeteer.LaunchOptions = {
+  const options: puppeteer.PuppeteerLaunchOptions = {
     ignoreHTTPSErrors: true,
     headless: false,
     args,
     dumpio: true,
-    executablePath
-  }
-
-  if (!options.executablePath) {
-    executablePath = await getLocalPath()
   }
 
   const browser = await puppeteer.launch(options)
@@ -248,12 +245,12 @@ export async function run({
   await configureViewport(width || 800, height || 600, page)
 
   page.on('console', handleConsole)
-  page.on('dialog', dialog => dialog.dismiss())
+  page.on('dialog', (dialog) => dialog.dismiss())
 
   // tslint:disable-next-line:no-console
-  page.on('pageerror', err => console.error(err))
+  page.on('pageerror', (err) => console.error(err))
 
-  await page.evaluateOnNewDocument(initMocha, reporter)
+  await page.evaluateOnNewDocument(initMocha as any, reporter)
   await page.goto(url)
   await page.waitForFunction(() => window['__mochaResult__'], { timeout: theTimeout })
   const result = await page.evaluate(() => window['__mochaResult__'])
@@ -272,9 +269,9 @@ function sourceUrl(file: string) {
 }
 
 export function serveRaw(html: string) {
-  return function(req: any, res: any) {
+  return function (req: any, res: any) {
     res.writeHead(200, 'OK', {
-      'Content-Type': 'text/html'
+      'Content-Type': 'text/html',
     })
 
     res.write(`<!DOCTYPE html>

@@ -29,7 +29,7 @@ export function initMocha(reporter: keyof typeof Mocha.reporters) {
         return res
       }
 
-      function clean(test: Mocha.ITest & { err?: any }) {
+      function clean(test: Mocha.Test & { err?: any }) {
         return {
           title: test.title,
           fullTitle: test.fullTitle(),
@@ -38,7 +38,7 @@ export function initMocha(reporter: keyof typeof Mocha.reporters) {
         }
       }
 
-      function result(stats?: Mocha.IStats) {
+      function result(stats?: Mocha.Stats) {
         return {
           result: {
             stats: {
@@ -60,11 +60,11 @@ export function initMocha(reporter: keyof typeof Mocha.reporters) {
         }
       }
 
-      function setResult(this: Mocha.IRunner) {
+      function setResult(this: Mocha.Runner) {
         !window['__mochaResult__'] && (window['__mochaResult__'] = result(this.stats))
       }
 
-      const runner = run(() => setTimeout(() => setResult.call(runner), 0))
+      const runner: Mocha.Runner = run(() => setTimeout(() => setResult.call(runner), 0))
         .on('pass', (test: any) => {
           passes.push(test)
           all.push(test)
@@ -91,7 +91,7 @@ export function initMocha(reporter: keyof typeof Mocha.reporters) {
     // tslint:disable-next-line:no-console
     M.process.stdout.write = (data: any) => console.log('stdout:', data)
     M.reporters.Base.useColors = true
-    M.reporters.none = function None(runner: Mocha.IRunner) {
+    M.reporters.none = function None(runner: Mocha.Runner) {
       M.reporters.Base.call(this, runner)
     }
   }

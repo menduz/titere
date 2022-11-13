@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2017",
+    "target": "es2020",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "sourceMap": true,
@@ -19,11 +19,8 @@
     "strict": true,
     "pretty": true,
     "outDir": "dist",
-    "plugins": [
-      {
-        "name": "tslint-language-service"
-      }
-    ]
+    "lib": ["dom", "ES2015"],
+    "skipLibCheck": true
   },
   "exclude": ["node_modules", "dist"]
 }
