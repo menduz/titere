@@ -31,10 +31,8 @@
   "devDependencies": {
     "@types/mocha": "^5.2.5",
     "@types/puppeteer": "^1.8.0",
-    "dcl-tslint-config-standard": "^1.1.0",
     "mocha": "^5.2.0",
     "tslint": "^5.11.0",
-    "tslint-language-service": "^0.9.9",
     "typescript": "^3.1.1"
   },
   "dependencies": {

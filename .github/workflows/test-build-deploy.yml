@@ -1,0 +1,24 @@
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  release:
+    types:
+      - created
+
+name: test-build
+jobs:
+  validations:
+    strategy:
+      matrix:
+        platform: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: browser-actions/setup-chrome@latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: lts/-1
+          cache: 'npm'
+      - run: npm test
