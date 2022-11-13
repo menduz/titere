@@ -21,5 +21,9 @@ jobs:
         with:
           node-version: lts/-1
           cache: 'npm'
-      - run: npm i
-      - run: npm test
+      - name: install
+        run: |
+          sudo apt-get install xvfb
+          npm ci
+      - name: run with desktop environment
+        run: xvfb-run --auto-servernum npm test
